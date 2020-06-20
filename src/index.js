@@ -19,6 +19,7 @@ function Square(props) {
 }
 
 function calculateWinner(squares) {
+  console.log(squares, `squares`);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -37,6 +38,9 @@ function calculateWinner(squares) {
         location: lines[i]
       };
     }
+  }
+  if (!squares.some(v => v === null)) {
+    return undefined;
   }
   return null;
 }
@@ -120,7 +124,6 @@ class Game extends React.Component {
     const { history, stepNumber } = this.state;
     const current = history[stepNumber];
     const result = calculateWinner(current.squares);
-    console.log(result);
     const moves = history.map((step, move) => {
       const desc = move
         ? `回到落子: [第${step.row + 1}行, 第${step.column + 1}列]`
@@ -143,9 +146,14 @@ class Game extends React.Component {
 
     let status;
     if (result) {
-      status = `Winner: ${result.winner}`;
+      status = `胜利者: ${result.winner}!`;
     } else {
-      status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+      // 我定义 undefined 为平局的情况, null 为尚未分出胜负
+      if (result === undefined) {
+        status = '平局!'
+      } else if (result === null) {
+        status = `当前落子: ${this.state.xIsNext ? 'X' : 'O'}`;
+      }
     }
     return (
       <div className="game">
