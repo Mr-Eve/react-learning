@@ -120,6 +120,20 @@ class Game extends React.Component {
     this.setState({ stepNumber: step, xIsNext: step % 2 === 0 });
   }
 
+  reset() {
+    this.setState({
+      history: [
+        {
+          squares: Array(9).fill(null),
+          column: null, // 当前点击的列数
+          row: null // 当前点击的行数
+        }
+      ],
+      stepNumber: 0,
+      xIsNext: true
+    });
+  }
+
   render() {
     const { history, stepNumber } = this.state;
     const current = history[stepNumber];
@@ -150,14 +164,18 @@ class Game extends React.Component {
     } else {
       // 我定义 undefined 为平局的情况, null 为尚未分出胜负
       if (result === undefined) {
-        status = '平局!'
+        status = '平局!';
       } else if (result === null) {
         status = `当前落子: ${this.state.xIsNext ? 'X' : 'O'}`;
       }
     }
+
     return (
       <div className="game">
         <div className="game-board">
+          <button type="button" onClick={() => this.reset()}>
+            重开
+          </button>
           <Board
             location={result?.location}
             squares={current.squares}
