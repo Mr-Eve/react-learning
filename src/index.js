@@ -69,7 +69,9 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          column: null, // 当前点击的列数
+          row: null // 当前点击的行数
         }
       ],
       stepNumber: 0,
@@ -86,7 +88,7 @@ class Game extends React.Component {
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
-      history: history.concat([{ squares }]),
+      history: history.concat([{ squares, column: i % 3, row: ~~(i / 3) }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
@@ -100,9 +102,11 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    console.log(history)
+    console.log(this.state);
     const moves = history.map((step, move) => {
-      const desc = move ? 'Go to move #' + move : 'Go to game start';
+      const desc = move
+        ? `回到落子: [第${step.row + 1}行, 第${step.column + 1}列]`
+        : 'Go to game start';
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
