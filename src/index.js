@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 function Square(props) {
   const { winSquare } = props;
   return (
     <button
-      className={classnames({
+      className={clsx({
         square: true,
         'strong-unit': winSquare
       })}
