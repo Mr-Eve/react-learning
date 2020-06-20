@@ -1,10 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import classnames from 'classnames';
 
 function Square(props) {
+  const { winSquare } = props;
   return (
-    <button className="square" onClick={props.onClick}>
+    <button
+      className={classnames({
+        square: true,
+        'strong-unit': winSquare
+      })}
+      onClick={props.onClick}
+    >
       {props.value}
     </button>
   );
@@ -24,17 +32,30 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winner: squares[a],
+        location: lines[i]
+      };
     }
   }
   return null;
 }
 
 class Board extends React.Component {
+  // 判断格子是否是胜者的格子
+  hightLight(location, i) {
+    if (!location) {
+      return false;
+    } else {
+      return location.includes(i);
+    }
+  }
+
   renderSquare(i) {
     return (
       <Square
         key={i}
+        winSquare={this.hightLight(this.props.location, i)}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -98,8 +119,8 @@ class Game extends React.Component {
   render() {
     const { history, stepNumber } = this.state;
     const current = history[stepNumber];
-    const winner = calculateWinner(current.squares);
-    console.log(this.state);
+    const result = calculateWinner(current.squares);
+    console.log(result);
     const moves = history.map((step, move) => {
       const desc = move
         ? `回到落子: [第${step.row + 1}行, 第${step.column + 1}列]`
@@ -114,17 +135,26 @@ class Game extends React.Component {
         </li>
       );
     });
+    /**
+     * 原题: 添加一个可以升序或降序显示历史记录的按钮。
+     * 直接reverse就可以了, 太简单懒得做
+     */
+    // moves.reverse();
 
     let status;
-    if (winner) {
-      status = `Winner: ${winner}`;
+    if (result) {
+      status = `Winner: ${result.winner}`;
     } else {
       status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} onClick={i => this.handleClick(i)} />
+          <Board
+            location={result?.location}
+            squares={current.squares}
+            onClick={i => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
           <div>{status}</div>
