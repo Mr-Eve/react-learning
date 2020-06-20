@@ -99,16 +99,20 @@ class Game extends React.Component {
   }
 
   render() {
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
+    const { history, stepNumber } = this.state;
+    const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
     console.log(this.state);
     const moves = history.map((step, move) => {
       const desc = move
         ? `回到落子: [第${step.row + 1}行, 第${step.column + 1}列]`
-        : 'Go to game start';
+        : '游戏开始';
       return (
-        <li key={move}>
+        <li
+          key={move}
+          className={move === stepNumber ? 'hight-light' : null}
+          attr-index={move}
+        >
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       );
